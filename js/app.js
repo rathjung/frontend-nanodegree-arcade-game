@@ -1,20 +1,47 @@
-var blockSizeX = 101;
-var blockSizeY = 83;
-var totalScore = 0;
+var blockSizeX = 101,
+    blockSizeY = 83,
+    totalScore = 0,
+    totalGem = 0,
+    characterSelect = 0;
+
+var playerStartX = 2 * blockSizeX,
+    playerStartY = 5 * blockSizeY - 20;
+
+var gemPosition = function() {
+    this.x = Math.floor(Math.random() * 4) * blockSizeX;
+    this.y = (Math.floor(Math.random() * 3) * blockSizeY) + 55;
+}
 
 var Chooser = function() {
     this.sprite = 'images/Selector.png';
-}
-
-Chooser.prototype.update = function() {
-
+    this.x = 0;
+    this.y = 220;
 }
 
 Chooser.prototype.render = function() {
-
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
-Chooser.prototype.handleInput = function() {
 
+Chooser.prototype.handleInput = function(key) {
+    switch (key) {
+        case 'left':
+            if (this.x < blockSizeX) {
+                this.x = this.x;
+            } else {
+                this.x = this.x - blockSizeX;
+            }
+            break;
+        case 'right':
+            if (this.x > blockSizeX * 3) {
+                this.x = this.x;
+            } else {
+                this.x = this.x + blockSizeX;
+            }
+            break;
+        case 'enter':
+            characterSelect = Math.floor(this.x / blockSizeX) + 1;
+            break;
+    }
 }
 
 // Enemies our player must avoid
@@ -54,20 +81,43 @@ Enemy.prototype.render = function() {
 // This class requires an update(), render() and
 // a handleInput() method.
 var Player = function() {
-    this.sprite = 'images/char-boy.png';
-    this.x = 2 * blockSizeX;
-    this.y = 5 * blockSizeY - 20;
+    this.sprite = '';
+    this.x = playerStartX;
+    this.y = playerStartY;
 }
 
-Player.prototype.update = function(dt) {
+Player.prototype.update = function() {
+    switch (characterSelect) {
+        case 1:
+            this.sprite = 'images/char-boy.png';
+            break;
+        case 2:
+            this.sprite = 'images/char-cat-girl.png';
+            break;
+        case 3:
+            this.sprite = 'images/char-horn-girl.png';
+            break;
+        case 4:
+            this.sprite = 'images/char-pink-girl.png';
+            break;
+        case 5:
+            this.sprite = 'images/char-princess-girl.png';
+            break;
+        default:
+            this.sprite = 'images/char-boy.png';
+            break;
+    }
     if (this.y < blockSizeY-20) {
-        this.x = 2 * blockSizeX;
-        this.y = 5 * blockSizeY - 20;
+        this.x = playerStartX;
+        this.y = playerStartY;
         totalScore += 1;
-    } else if (collisionDetect()) {
-        this.x = 2 * blockSizeX;
-        this.y = 5 * blockSizeY - 20;
+    } else if (collisionDetect(player, allEnemies)) {
+        this.x = playerStartX;
+        this.y = playerStartY;
         totalScore -= 1;
+    } else if (collisionDetect(player, gem)) {
+        totalGem += 1;
+        gemPosition.apply(gem);
     }
 }
 
@@ -108,16 +158,27 @@ Player.prototype.handleInput = function(key) {
     }
 }
 
+var Gem = function() {
+    this.sprite = 'images/Gem Orange.png';
+    gemPosition.apply(this);
+}
+
+Gem.prototype.render = function() {
+    ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
+}
+
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
 // Place the player object in a variable called player
 var allEnemies = [];
 var player = new Player();
+var chooser = new Chooser();
+var gem = new Gem();
 
 function generateEnemy(){
     var enemy = new Enemy();
     allEnemies.push(enemy);
-    if (allEnemies.length > 3) {
+    if (allEnemies.length > 2) {
         clearInterval(randomEnemy);
     }
 }
@@ -125,22 +186,32 @@ function generateEnemy(){
 generateEnemy();
 var randomEnemy = setInterval(generateEnemy, 3000);
 
-function collisionDetect() {
-    var playerX = Math.floor(player.x / blockSizeX);
-    var playerY = Math.floor(player.y / blockSizeY);
-    for (var i = 0; i < allEnemies.length; i += 1) {
-        var enemyX = Math.floor(allEnemies[i].x / blockSizeX);
-        var enemyY = Math.floor((allEnemies[i].y) / blockSizeY);
+function collisionDetect(elementA, elementB) {
+    var playerX = Math.floor(elementA.x / blockSizeX);
+    var playerY = Math.floor(elementA.y / blockSizeY);
+    if (Array.isArray(elementB)) {
+        for (var i = 0; i < elementB.length; i += 1) {
+            var enemyX = Math.floor(elementB[i].x / blockSizeX);
+            var enemyY = Math.floor((elementB[i].y) / blockSizeY);
+            if (enemyX === playerX && enemyY === playerY) {
+                return true;
+            }
+        }
+    } else {
+        var enemyX = Math.floor(elementB.x / blockSizeX);
+        var enemyY = Math.floor((elementB.y) / blockSizeY);
         if (enemyX === playerX && enemyY === playerY) {
             return true;
         }
     }
+
 }
 
 // This listens for key presses and sends the keys to your
 // Player.handleInput() method. You don't need to modify this.
 document.addEventListener('keyup', function(e) {
     var allowedKeys = {
+        13: 'enter',
         37: 'left',
         38: 'up',
         39: 'right',
@@ -148,4 +219,5 @@ document.addEventListener('keyup', function(e) {
     };
 
     player.handleInput(allowedKeys[e.keyCode]);
+    chooser.handleInput(allowedKeys[e.keyCode]);
 });

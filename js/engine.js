@@ -23,8 +23,7 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime,
-        characterSelect = 0;
+        lastTime;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -47,7 +46,7 @@ var Engine = (function(global) {
          * our update function since it may be used for smooth animation.
          */
         if (characterSelect === 0) {
-
+            renderCharacterChooser();
         } else {
             update(dt);
             render();
@@ -109,6 +108,26 @@ var Engine = (function(global) {
      * they are just drawing the entire screen over and over.
      */
     function render() {
+        renderBackground()
+        renderEntities();
+        renderScore();
+    }
+
+    function renderCharacterChooser() {
+        renderBackground()
+        chooser.render();
+        ctx.drawImage(Resources.get('images/char-boy.png'), 0, 220);
+        ctx.drawImage(Resources.get('images/char-cat-girl.png'), 101, 220);
+        ctx.drawImage(Resources.get('images/char-horn-girl.png'), 202, 220);
+        ctx.drawImage(Resources.get('images/char-pink-girl.png'), 303, 220);
+        ctx.drawImage(Resources.get('images/char-princess-girl.png'), 404, 220);
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "20px Arial";
+        var text = "Choose character with arrow then press enter";
+        ctx.fillText(text, 20, 80);
+    }
+
+    function renderBackground() {
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
          */
@@ -140,21 +159,6 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
-        if (characterSelect === 0) {
-            renderCharacterChooser();
-        } else {
-            renderEntities();
-            renderScore();
-        }
-    }
-
-    function renderCharacterChooser() {
-        ctx.drawImage(Resources.get('images/Selector.png'), 0, 220);
-        ctx.drawImage(Resources.get('images/char-boy.png'), 0, 220);
-        ctx.drawImage(Resources.get('images/char-cat-girl.png'), 101, 220);
-        ctx.drawImage(Resources.get('images/char-horn-girl.png'), 202, 220);
-        ctx.drawImage(Resources.get('images/char-pink-girl.png'), 303, 220);
-        ctx.drawImage(Resources.get('images/char-princess-girl.png'), 404, 220);
     }
 
     /* This function is called by the render function and is called on each game
@@ -165,17 +169,17 @@ var Engine = (function(global) {
         /* Loop through all of the objects within the allEnemies array and call
          * the render function you have defined.
          */
+        gem.render();
         allEnemies.forEach(function(enemy) {
             enemy.render();
         });
-
         player.render();
     }
 
     function renderScore() {
         ctx.fillStyle = "#ffffff";
         ctx.font = "20px Arial";
-        var text = "Score: " + totalScore;
+        var text = "Score: " + totalScore + " " + "Gem: " + totalGem;
         ctx.fillText(text, 20, 80);
     }
 
@@ -185,7 +189,10 @@ var Engine = (function(global) {
      */
     function reset() {
         // noop
+        characterSelect = 0;
         totalScore = 0;
+        totalGem = 0;
+        chooser.x = 0;
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -202,7 +209,8 @@ var Engine = (function(global) {
         'images/char-horn-girl.png',
         'images/char-pink-girl.png',
         'images/char-princess-girl.png',
-        'images/Selector.png'
+        'images/Selector.png',
+        'images/Gem Orange.png'
     ]);
     Resources.onReady(init);
 
@@ -211,5 +219,5 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
-    global.reset = reset;
+    global.init = init;
 })(this);
