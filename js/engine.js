@@ -23,7 +23,8 @@ var Engine = (function(global) {
         win = global.window,
         canvas = doc.createElement('canvas'),
         ctx = canvas.getContext('2d'),
-        lastTime;
+        lastTime,
+        characterSelect = 0;
 
     canvas.width = 505;
     canvas.height = 606;
@@ -45,8 +46,12 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
-        update(dt);
-        render();
+        if (characterSelect === 0) {
+
+        } else {
+            update(dt);
+            render();
+        }
 
         /* Set our lastTime variable which is used to determine the time delta
          * for the next time this function is called.
@@ -135,9 +140,21 @@ var Engine = (function(global) {
                 ctx.drawImage(Resources.get(rowImages[row]), col * 101, row * 83);
             }
         }
+        if (characterSelect === 0) {
+            renderCharacterChooser();
+        } else {
+            renderEntities();
+            renderScore();
+        }
+    }
 
-
-        renderEntities();
+    function renderCharacterChooser() {
+        ctx.drawImage(Resources.get('images/Selector.png'), 0, 220);
+        ctx.drawImage(Resources.get('images/char-boy.png'), 0, 220);
+        ctx.drawImage(Resources.get('images/char-cat-girl.png'), 101, 220);
+        ctx.drawImage(Resources.get('images/char-horn-girl.png'), 202, 220);
+        ctx.drawImage(Resources.get('images/char-pink-girl.png'), 303, 220);
+        ctx.drawImage(Resources.get('images/char-princess-girl.png'), 404, 220);
     }
 
     /* This function is called by the render function and is called on each game
@@ -155,12 +172,20 @@ var Engine = (function(global) {
         player.render();
     }
 
+    function renderScore() {
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "20px Arial";
+        var text = "Score: " + totalScore;
+        ctx.fillText(text, 20, 80);
+    }
+
     /* This function does nothing but it could have been a good place to
      * handle game reset states - maybe a new game menu or a game over screen
      * those sorts of things. It's only called once by the init() method.
      */
     function reset() {
         // noop
+        totalScore = 0;
     }
 
     /* Go ahead and load all of the images we know we're going to need to
@@ -172,7 +197,12 @@ var Engine = (function(global) {
         'images/water-block.png',
         'images/grass-block.png',
         'images/enemy-bug.png',
-        'images/char-boy.png'
+        'images/char-boy.png',
+        'images/char-cat-girl.png',
+        'images/char-horn-girl.png',
+        'images/char-pink-girl.png',
+        'images/char-princess-girl.png',
+        'images/Selector.png'
     ]);
     Resources.onReady(init);
 
@@ -181,4 +211,5 @@ var Engine = (function(global) {
      * from within their app.js files.
      */
     global.ctx = ctx;
+    global.reset = reset;
 })(this);
