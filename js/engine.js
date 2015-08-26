@@ -45,6 +45,7 @@ var Engine = (function(global) {
         /* Call our update/render functions, pass along the time delta to
          * our update function since it may be used for smooth animation.
          */
+         // Control flow of the game. If the player didn't select character then ask them first.
         if (characterSelect === 0) {
             renderCharacterChooser();
         } else {
@@ -107,12 +108,15 @@ var Engine = (function(global) {
      * they are flipbooks creating the illusion of animation but in reality
      * they are just drawing the entire screen over and over.
      */
+
+     // Refactor code to different part to render.
     function render() {
         renderBackground()
         renderEntities();
         renderScore();
     }
 
+    // The character chooser screen.
     function renderCharacterChooser() {
         renderBackground()
         chooser.render();
@@ -127,6 +131,7 @@ var Engine = (function(global) {
         ctx.fillText(text, 20, 80);
     }
 
+    // For render background.
     function renderBackground() {
         /* This array holds the relative URL to the image used
          * for that particular row of the game level.
@@ -176,6 +181,7 @@ var Engine = (function(global) {
         player.render();
     }
 
+    // For render score.
     function renderScore() {
         ctx.fillStyle = "#ffffff";
         ctx.font = "20px Arial";
@@ -218,6 +224,9 @@ var Engine = (function(global) {
      * object when run in a browser) so that developer's can use it more easily
      * from within their app.js files.
      */
+
     global.ctx = ctx;
+
+    // For making the reset button.
     global.init = init;
 })(this);

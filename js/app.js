@@ -1,27 +1,33 @@
+// Generate variables
 var blockSizeX = 101,
     blockSizeY = 83,
     totalScore = 0,
     totalGem = 0,
     characterSelect = 0;
 
+// Variable for setting the starter point of the player.
 var playerStartX = 2 * blockSizeX,
     playerStartY = 5 * blockSizeY - 20;
 
+// Function for generate random position of the gem.
 var gemPosition = function() {
     this.x = Math.floor(Math.random() * 4) * blockSizeX;
     this.y = (Math.floor(Math.random() * 3) * blockSizeY) + 55;
 }
 
+// Chooser object is for generate the character selector.
 var Chooser = function() {
     this.sprite = 'images/Selector.png';
     this.x = 0;
     this.y = 220;
 }
 
+// For Rendering the selector image.
 Chooser.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// For Handle the keyboard input for character selector.
 Chooser.prototype.handleInput = function(key) {
     switch (key) {
         case 'left':
@@ -52,8 +58,8 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.x = 0;
-    this.y =  55 + Math.floor(Math.random() * 3) * blockSizeY;
+    this.x = 0 - blockSizeX;
+    this.y = 55 + Math.floor(Math.random() * 3) * blockSizeY;
     this.speed = Math.floor(Math.random() * 500) + 100;
 }
 
@@ -65,12 +71,11 @@ Enemy.prototype.update = function(dt) {
     // all computers.
     this.x = this.x + this.speed * dt;
     if (this.x > blockSizeX * 5) {
-        this.x = 0;
-        this.y =  55 + Math.floor(Math.random() * 3) * blockSizeY;
+        this.x = 0 - blockSizeX;
+        this.y = 55 + Math.floor(Math.random() * 3) * blockSizeY;
         this.speed = Math.floor(Math.random() * 500) + 100;
     }
 }
-
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
@@ -86,6 +91,7 @@ var Player = function() {
     this.y = playerStartY;
 }
 
+// For update the look of character.
 Player.prototype.update = function() {
     switch (characterSelect) {
         case 1:
@@ -121,10 +127,12 @@ Player.prototype.update = function() {
     }
 }
 
+// For rendering the character.
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
 
+// For Handle the keyboard input for character movement.
 Player.prototype.handleInput = function(key) {
     switch (key) {
         case 'left':
@@ -158,11 +166,13 @@ Player.prototype.handleInput = function(key) {
     }
 }
 
+// Constructor for generate gem.
 var Gem = function() {
     this.sprite = 'images/Gem Orange.png';
     gemPosition.apply(this);
 }
 
+// For render the gem.
 Gem.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
 }
@@ -175,6 +185,7 @@ var player = new Player();
 var chooser = new Chooser();
 var gem = new Gem();
 
+// For generate new enemy every 3 seconds then stop.
 function generateEnemy(){
     var enemy = new Enemy();
     allEnemies.push(enemy);
@@ -186,6 +197,7 @@ function generateEnemy(){
 generateEnemy();
 var randomEnemy = setInterval(generateEnemy, 3000);
 
+// For detecting the collision.
 function collisionDetect(elementA, elementB) {
     var playerX = Math.floor(elementA.x / blockSizeX);
     var playerY = Math.floor(elementA.y / blockSizeY);
