@@ -1,54 +1,54 @@
 // Generate variables
-var blockSizeX = 101,
-    blockSizeY = 83,
+var BLOCK_SIZE_X = 101,
+    BLOCK_SIZE_Y = 83,
     totalScore = 0,
     totalGem = 0,
     characterSelect = 0;
 
 // Variable for setting the starter point of the player.
-var playerStartX = 2 * blockSizeX,
-    playerStartY = 5 * blockSizeY - 20;
+var playerStartX = 2 * BLOCK_SIZE_X,
+    playerStartY = 5 * BLOCK_SIZE_Y - 20;
 
 // Function for generate random position of the gem.
 var gemPosition = function() {
-    this.x = Math.floor(Math.random() * 4) * blockSizeX;
-    this.y = (Math.floor(Math.random() * 3) * blockSizeY) + 55;
-}
+    this.x = Math.floor(Math.random() * 4) * BLOCK_SIZE_X;
+    this.y = (Math.floor(Math.random() * 3) * BLOCK_SIZE_Y) + 55;
+};
 
 // Chooser object is for generate the character selector.
 var Chooser = function() {
     this.sprite = 'images/Selector.png';
     this.x = 0;
     this.y = 220;
-}
+};
 
 // For Rendering the selector image.
 Chooser.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 // For Handle the keyboard input for character selector.
 Chooser.prototype.handleInput = function(key) {
     switch (key) {
         case 'left':
-            if (this.x < blockSizeX) {
+            if (this.x < BLOCK_SIZE_X) {
                 this.x = this.x;
             } else {
-                this.x = this.x - blockSizeX;
+                this.x = this.x - BLOCK_SIZE_X;
             }
             break;
         case 'right':
-            if (this.x > blockSizeX * 3) {
+            if (this.x > BLOCK_SIZE_X * 3) {
                 this.x = this.x;
             } else {
-                this.x = this.x + blockSizeX;
+                this.x = this.x + BLOCK_SIZE_X;
             }
             break;
         case 'enter':
-            characterSelect = Math.floor(this.x / blockSizeX) + 1;
+            characterSelect = Math.floor(this.x / BLOCK_SIZE_X) + 1;
             break;
     }
-}
+};
 
 // Enemies our player must avoid
 var Enemy = function() {
@@ -58,10 +58,10 @@ var Enemy = function() {
     // The image/sprite for our enemies, this uses
     // a helper we've provided to easily load images
     this.sprite = 'images/enemy-bug.png';
-    this.x = 0 - blockSizeX;
-    this.y = 55 + Math.floor(Math.random() * 3) * blockSizeY;
+    this.x = 0 - BLOCK_SIZE_X;
+    this.y = 55 + Math.floor(Math.random() * 3) * BLOCK_SIZE_Y;
     this.speed = Math.floor(Math.random() * 500) + 100;
-}
+};
 
 // Update the enemy's position, required method for game
 // Parameter: dt, a time delta between ticks
@@ -70,17 +70,17 @@ Enemy.prototype.update = function(dt) {
     // which will ensure the game runs at the same speed for
     // all computers.
     this.x = this.x + this.speed * dt;
-    if (this.x > blockSizeX * 5) {
-        this.x = 0 - blockSizeX;
-        this.y = 55 + Math.floor(Math.random() * 3) * blockSizeY;
+    if (this.x > BLOCK_SIZE_X * 5) {
+        this.x = 0 - BLOCK_SIZE_X;
+        this.y = 55 + Math.floor(Math.random() * 3) * BLOCK_SIZE_Y;
         this.speed = Math.floor(Math.random() * 500) + 100;
     }
-}
+};
 
 // Draw the enemy on the screen, required method for game
 Enemy.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 // Now write your own player class
 // This class requires an update(), render() and
@@ -89,7 +89,7 @@ var Player = function() {
     this.sprite = '';
     this.x = playerStartX;
     this.y = playerStartY;
-}
+};
 
 // For update the look of character.
 Player.prototype.update = function() {
@@ -113,7 +113,7 @@ Player.prototype.update = function() {
             this.sprite = 'images/char-boy.png';
             break;
     }
-    if (this.y < blockSizeY-20) {
+    if (this.y < BLOCK_SIZE_Y-20) {
         this.x = playerStartX;
         this.y = playerStartY;
         totalScore += 1;
@@ -125,57 +125,57 @@ Player.prototype.update = function() {
         totalGem += 1;
         gemPosition.apply(gem);
     }
-}
+};
 
 // For rendering the character.
 Player.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 // For Handle the keyboard input for character movement.
 Player.prototype.handleInput = function(key) {
     switch (key) {
         case 'left':
-            if (this.x < blockSizeX) {
+            if (this.x < BLOCK_SIZE_X) {
                 this.x = this.x;
             } else {
-                this.x = this.x - blockSizeX;
+                this.x = this.x - BLOCK_SIZE_X;
             }
             break;
         case 'up':
-            if (this.y < blockSizeY - 20) {
+            if (this.y < BLOCK_SIZE_Y - 20) {
                 this.y = this.y;
             } else {
-                this.y = this.y - blockSizeY;
+                this.y = this.y - BLOCK_SIZE_Y;
             }
             break;
         case 'right':
-            if (this.x > blockSizeX * 3) {
+            if (this.x > BLOCK_SIZE_X * 3) {
                 this.x = this.x;
             } else {
-                this.x = this.x + blockSizeX;
+                this.x = this.x + BLOCK_SIZE_X;
             }
             break;
         case 'down':
-            if (this.y > blockSizeY * 4) {
+            if (this.y > BLOCK_SIZE_Y * 4) {
                 this.y = this. y;
             } else {
-                this.y = this.y + blockSizeY;
+                this.y = this.y + BLOCK_SIZE_Y;
             }
             break;
     }
-}
+};
 
 // Constructor for generate gem.
 var Gem = function() {
     this.sprite = 'images/Gem Orange.png';
     gemPosition.apply(this);
-}
+};
 
 // For render the gem.
 Gem.prototype.render = function() {
     ctx.drawImage(Resources.get(this.sprite), this.x, this.y);
-}
+};
 
 // Now instantiate your objects.
 // Place all enemy objects in an array called allEnemies
@@ -199,19 +199,19 @@ var randomEnemy = setInterval(generateEnemy, 3000);
 
 // For detecting the collision.
 function collisionDetect(elementA, elementB) {
-    var playerX = Math.floor(elementA.x / blockSizeX);
-    var playerY = Math.floor(elementA.y / blockSizeY);
+    var playerX = Math.floor(elementA.x / BLOCK_SIZE_X);
+    var playerY = Math.floor(elementA.y / BLOCK_SIZE_Y);
     if (Array.isArray(elementB)) {
         for (var i = 0; i < elementB.length; i += 1) {
-            var enemyX = Math.floor(elementB[i].x / blockSizeX);
-            var enemyY = Math.floor((elementB[i].y) / blockSizeY);
+            var enemyX = Math.floor(elementB[i].x / BLOCK_SIZE_X);
+            var enemyY = Math.floor((elementB[i].y) / BLOCK_SIZE_Y);
             if (enemyX === playerX && enemyY === playerY) {
                 return true;
             }
         }
     } else {
-        var enemyX = Math.floor(elementB.x / blockSizeX);
-        var enemyY = Math.floor((elementB.y) / blockSizeY);
+        var enemyX = Math.floor(elementB.x / BLOCK_SIZE_X);
+        var enemyY = Math.floor((elementB.y) / BLOCK_SIZE_Y);
         if (enemyX === playerX && enemyY === playerY) {
             return true;
         }

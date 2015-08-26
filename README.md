@@ -4,6 +4,7 @@ This project is for udacity frontend nanodefree course. It's a game.
 
 ### Instruction
 
+* Open index.html file in your browser.
 * Start the game by choosing a character via left or right arrow.
 * Play the game with arrow key. If you can reach the water you will get one score.
 * If you collect a gem. You get one gem.
